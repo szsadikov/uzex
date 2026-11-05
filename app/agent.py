@@ -90,7 +90,7 @@ def table_text(res, max_rows=10):
 class Agent:
     def __init__(self, api_key=None):
         self.client = genai.Client(api_key=api_key or os.environ.get('GEMINI_API_KEY') or os.environ.get('GOOGLE_API_KEY'),
-                                   http_options=types.HttpOptions(timeout=40000))
+                                   http_options=types.HttpOptions(timeout=int(os.environ.get('LLM_TIMEOUT_MS', '25000'))))
         get_con()
 
     def _config(self, force_final=False):
@@ -102,16 +102,27 @@ class Agent:
             kw['thinking_config'] = types.ThinkingConfig(thinking_level=THINKING)
         return types.GenerateContentConfig(**kw)
 
-    def _generate(self, contents, force_final):
+    def _generate(self, contents, force_final, trace):
         last = None
         for model in (MODEL, FALLBACK_MODEL):
             for attempt in range(2):
+                t = time.time()
                 try:
-                    return self.client.models.generate_content(model=model, contents=contents, config=self._config(force_final)), model
+                    r = self.client.models.generate_content(model=model, contents=contents, config=self._config(force_final))
+                    u = getattr(r, 'usage_metadata', None)
+                    trace.append({'model': model, 's': round(time.time() - t, 2), 'ok': True,
+                                  'calls': [fc.name for fc in (r.function_calls or [])],
+                                  'in': getattr(u, 'prompt_token_count', None), 'out': getattr(u, 'candidates_token_count', None),
+                                  'think': getattr(u, 'thoughts_token_count', None)})
+                    return r, model
                 except Exception as e:  # сеть, 5xx, 429
                     last = e
-                    log.warning('LLM error %s %s: %s', model, attempt, e)
-                    time.sleep(1.0)
+                    msg = str(e)[:200]
+                    trace.append({'model': model, 's': round(time.time() - t, 2), 'ok': False, 'err': msg})
+                    log.warning('LLM error %s %s: %s', model, attempt, msg)
+                    if '404' in msg or 'not found' in msg.lower() or '400' in msg:
+                        break  # модель недоступна / неверный запрос — сразу к запасной
+                    time.sleep(0.5)
         raise last
 
     def ask(self, question: str):
@@ -119,7 +130,7 @@ class Agent:
         lang = detect_lang(question)
         m = MSG[lang]
         contents = [types.Content(role='user', parts=[types.Part(text=question)])]
-        queries, tool_log = [], []
+        queries, tool_log, trace = [], [], []
         validation_retry_used = False
         model_used = MODEL
         result = None
@@ -129,7 +140,7 @@ class Agent:
                 force = step >= MAX_STEPS - 1 or elapsed > TIME_BUDGET * 0.7
                 if elapsed > TIME_BUDGET:
                     break
-                resp, model_used = self._generate(contents, force)
+                resp, model_used = self._generate(contents, force, trace)
                 cand = resp.candidates[0].content if resp.candidates else None
                 calls = resp.function_calls or []
                 if cand is None or not calls:
@@ -193,6 +204,7 @@ class Agent:
             'lang': lang, 'model': model_used, 'elapsed_s': round(time.time() - t0, 1),
             'queries': [{k: q[k] for k in ('sql', 'purpose', 'columns', 'rows', 'row_count', 'truncated')} for q in queries],
             'lookups': [t['args'] for t in tool_log if t['tool'] == 'lookup'],
+            'trace': trace,
         })
         return result
 
