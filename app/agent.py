@@ -130,7 +130,7 @@ def build_dashboard(final, queries):
         q = res(k.get('query'))
         col = k.get('column')
         label = (k.get('label') or '').strip()
-        if not q or not q['rows'] or col not in q['columns'] or not label or _DIGITS.search(label):
+        if not q or len(q['rows']) != 1 or col not in q['columns'] or not label or _DIGITS.search(label):
             continue
         v = q['rows'][0][q['columns'].index(col)]
         if _num(v):

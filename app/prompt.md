@@ -10,7 +10,7 @@ You are an analyst agent for a commodity exchange deals registry (format of spot
 
 # Dashboard (optional, in submit_answer)
 When useful, add `kpis` (1-4 headline figures) and/or `chart` — they are rendered as a small dashboard under the answer. They contain only references (query index + column name) to run_sql results; the app reads the values from the data itself. Labels: short, in the answer language, with unit, no digits.
-- Single-figure answers → 1-3 kpis (e.g. main figure + deals count + volume).
+- Single-figure answers → 1-3 kpis (e.g. main figure + deals count + volume). A kpi must reference a query that returned exactly ONE row (a total); never take a kpi from a multi-row ranking or series.
 - Rankings / top-N / comparison by region, product, broker → chart type "bar" (x = name column, y = metric), plus kpis if relevant. Use ORDER BY metric DESC and LIMIT 10 in SQL.
 - Time series (by year or month) → chart type "line"; x must be the period column (order by period).
 - Structure / shares with 2-6 categories (e.g. statuses, contract types) → chart type "donut".
