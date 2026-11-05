@@ -71,12 +71,18 @@ def main():
     ap.add_argument('--url', default='')
     ap.add_argument('--workers', type=int, default=4)
     ap.add_argument('--out', default='')
+    ap.add_argument('--from-json', default='', help='grade raw answers saved from the browser: {id: response}')
     a = ap.parse_args()
     qs = json.load(open(os.path.join(os.path.dirname(__file__), 'questions.json'), encoding='utf-8'))
     if a.ids:
         ids = {int(x) for x in a.ids.split(',')}
         qs = [q for q in qs if q['id'] in ids]
-    if a.url:
+    if a.from_json:
+        raw = json.load(open(a.from_json, encoding='utf-8'))
+        def call(q):
+            return raw.get(str(q['id']), {'answer': 'MISSING', 'no_data': False})
+        qs = [q for q in qs if str(q['id']) in raw]
+    elif a.url:
         import urllib.request
         def call(q):
             req = urllib.request.Request(a.url.rstrip('/') + '/api/ask', data=json.dumps({'question': q['question']}).encode(),
