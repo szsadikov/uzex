@@ -74,13 +74,24 @@ _PAREN_TECH = re.compile(r"\s*\((?=[^()]*\b" + _TECH + r"\b)[^()]*\)")
 _CODE_TICK = re.compile(r"`([^`]*)`")
 
 
+_TNVED = None
+
+
+def _tnved_codes():
+    global _TNVED
+    if _TNVED is None:
+        _TNVED = {r[0] for r in get_con().execute("SELECT DISTINCT tnved FROM product_groups").fetchall()}
+    return _TNVED
+
+
 def humanize(text: str) -> str:
     """Убирает из текста служебные имена колонок/кодов (только удаление — новых значений не добавляет)."""
     if not text:
         return text
     t = _PAREN_TECH.sub('', text)
     t = _CODE_TICK.sub(lambda m: '' if re.fullmatch(r"[\w\s=<>'.,%-]*", m.group(1)) and re.search(_TECH + r"|^[A-Z]{3}$|^\d{6}(_[MD])?$", m.group(1)) else m.group(1), t)
-    t = re.sub(r"\s*\((?:код[^()]*|kodi[^()]*|коди[^()]*)\)", '', t, flags=re.I)
+    t = re.sub(r"\s*\((?:код[^()]*|kodi[^()]*|коди[^()]*|тн вэд[^()]*|tn ved[^()]*)\)", '', t, flags=re.I)
+    t = re.sub(r"\s*\((\d{6})(?:_[MD])?\)", lambda m: '' if m.group(1) in _tnved_codes() else m.group(0), t)
     t = re.sub(r"[ \t]+([,.;:])", r"\1", t)
     t = re.sub(r"[ \t]{2,}", ' ', t)
     return t.strip()
