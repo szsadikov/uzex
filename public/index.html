@@ -69,7 +69,7 @@ async function send(){
   try{
     const r=await fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:text})});
     const d=await r.json(); clearInterval(tm); a.className='a';
-    let h=esc(d.answer||d.error||'Ошибка');
+    let h=esc(d.answer||d.error||'Ошибка').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/^\s*[\*\-]\s+/gm,'• ');
     const uz=(d.lang||'').startsWith('uz');
     const L=uz?{basis:'Nimaga asoslangan',assum:'Shartlar',q:'SQL so‘rov',rows:'qator',ver:'maʼlumotlar bilan tasdiqlangan',unver:'tasdiqlanmagan',nod:'maʼlumot yoʻq'}:{basis:'На чём основано',assum:'Условия',q:'SQL-запрос',rows:'строк',ver:'проверено по данным',unver:'не подтверждено',nod:'нет данных'};
     h+='<div class="meta">'+(d.verified?`<span class="badge ok">✓ ${L.ver}</span>`:`<span class="badge warn">${L.unver}</span>`)+(d.no_data?`<span class="badge">${L.nod}</span>`:'')+`<span>${d.elapsed_s??''} с</span></div>`;
