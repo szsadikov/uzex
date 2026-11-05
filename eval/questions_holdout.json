@@ -1,0 +1,167 @@
+[
+ {
+  "id": 101,
+  "lang": "ru",
+  "question": "На сколько процентов вырос оборот биржи в 2025 году по сравнению с 2024?",
+  "kind": "num",
+  "expect": [
+   21.85345885458762
+  ],
+  "alt": [
+   21.95092602025182
+  ]
+ },
+ {
+  "id": 102,
+  "lang": "ru",
+  "question": "В каком месяце 2025 года было больше всего сделок?",
+  "kind": "month",
+  "expect": [
+   10
+  ],
+  "alt": []
+ },
+ {
+  "id": 103,
+  "lang": "ru",
+  "question": "Сколько форвардных сделок было заключено в 2026 году?",
+  "kind": "num",
+  "expect": [
+   7771
+  ],
+  "alt": [
+   7592
+  ]
+ },
+ {
+  "id": 104,
+  "lang": "ru",
+  "question": "Какая максимальная цена за тонну карбамида была в 2024 году?",
+  "kind": "num",
+  "expect": [
+   6642769.0
+  ],
+  "alt": [
+   6642769.0
+  ]
+ },
+ {
+  "id": 105,
+  "lang": "ru",
+  "question": "Сколько всего тонн недопоставлено по частично исполненным сделкам с цементом в 2025 году?",
+  "kind": "num",
+  "expect": [
+   26909.0
+  ],
+  "alt": []
+ },
+ {
+  "id": 106,
+  "lang": "ru",
+  "question": "Какой регион покупателей лидирует по закупкам сахара в 2025 году?",
+  "kind": "name",
+  "expect": [
+   "г. Ташкент"
+  ],
+  "alt": []
+ },
+ {
+  "id": 107,
+  "lang": "ru",
+  "question": "Сколько сделок прошло через обратный аукцион в 2023 году?",
+  "kind": "num",
+  "expect": [
+   1399
+  ],
+  "alt": [
+   1309
+  ]
+ },
+ {
+  "id": 108,
+  "lang": "ru",
+  "question": "Какова средняя стартовая цена дизельного топлива в 2026 году?",
+  "kind": "num",
+  "expect": [
+   11619163.9172
+  ],
+  "alt": [
+   11587412.3183
+  ]
+ },
+ {
+  "id": 109,
+  "lang": "ru",
+  "question": "Какой минимальный курс доллара был в 2025 году?",
+  "kind": "num",
+  "expect": [
+   12181.16
+  ],
+  "alt": []
+ },
+ {
+  "id": 110,
+  "lang": "ru",
+  "question": "Сколько сделок купил покупатель \"Fo‘sor Qurilish\" за всё время?",
+  "kind": "num",
+  "expect": [
+   7174
+  ],
+  "alt": [
+   6674
+  ]
+ },
+ {
+  "id": 111,
+  "lang": "uz",
+  "question": "2026-yil sentyabr oyida benzin AI-95 ning o‘rtacha narxi qancha bo‘lgan?",
+  "kind": "num",
+  "expect": [
+   13708.7486,
+   18591186.6759
+  ],
+  "alt": []
+ },
+ {
+  "id": 112,
+  "lang": "uz",
+  "question": "Qaysi brokerlik idorasi Samarqand viloyatida ro‘yxatdan o‘tgan va eng ko‘p bitim qilgan?",
+  "kind": "name",
+  "expect": [
+   "\"Kuxon Broker\" MChJ"
+  ],
+  "alt": []
+ },
+ {
+  "id": 113,
+  "lang": "uz",
+  "question": "2022-yilda eksport bitimlari umumiy summasi AQSh dollarida qancha?",
+  "kind": "num",
+  "expect": [
+   222710633.68
+  ],
+  "alt": [
+   236554900.6
+  ]
+ },
+ {
+  "id": 114,
+  "lang": "uz_cyr",
+  "question": "2025 йилда нечта битим тўлиқ бажарилган?",
+  "kind": "num",
+  "expect": [
+   102261
+  ],
+  "alt": [
+   107678
+  ]
+ },
+ {
+  "id": 115,
+  "lang": "ru",
+  "question": "Какой оборот по золоту на бирже в 2025 году?",
+  "kind": "nodata",
+  "expect": [],
+  "alt": []
+ }
+]
