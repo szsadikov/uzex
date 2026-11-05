@@ -69,6 +69,23 @@ MSG = {
 }
 
 
+_TECH = r"(?:[a-z]+_[a-z_]+|year|month|quarter|status|unit|currency)"
+_PAREN_TECH = re.compile(r"\s*\((?=[^()]*\b" + _TECH + r"\b)[^()]*\)")
+_CODE_TICK = re.compile(r"`([^`]*)`")
+
+
+def humanize(text: str) -> str:
+    """Убирает из текста служебные имена колонок/кодов (только удаление — новых значений не добавляет)."""
+    if not text:
+        return text
+    t = _PAREN_TECH.sub('', text)
+    t = _CODE_TICK.sub(lambda m: '' if re.fullmatch(r"[\w\s=<>'.,%-]*", m.group(1)) and re.search(_TECH + r"|^[A-Z]{3}$|^\d{6}(_[MD])?$", m.group(1)) else m.group(1), t)
+    t = re.sub(r"\s*\((?:код[^()]*|kodi[^()]*|коди[^()]*)\)", '', t, flags=re.I)
+    t = re.sub(r"[ \t]+([,.;:])", r"\1", t)
+    t = re.sub(r"[ \t]{2,}", ' ', t)
+    return t.strip()
+
+
 def _fmt_cell(v):
     if isinstance(v, float):
         if v.is_integer():
@@ -186,7 +203,7 @@ class Agent:
                     no_data = bool(final.get('no_data'))
                     problems = validate(answer + ' ' + (final.get('assumptions') or ''), question, [t['result'] for t in tool_log])
                     if not problems:
-                        result = {'answer': answer, 'assumptions': final.get('assumptions') or '', 'no_data': no_data, 'verified': True}
+                        result = {'answer': humanize(answer), 'assumptions': humanize(final.get('assumptions') or ''), 'no_data': no_data, 'verified': True}
                         break
                     log.warning('validation failed: %s', problems)
                     if not validation_retry_used and time.time() - t0 < TIME_BUDGET * 0.75:
