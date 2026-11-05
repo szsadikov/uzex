@@ -32,6 +32,12 @@ def ask(body: Ask):
     return res
 
 
+@app.get('/api/diag')
+def diag_ep():
+    from app.agent import diag
+    return diag()
+
+
 @app.get('/api/health')
 def health():
     from app.db import get_con

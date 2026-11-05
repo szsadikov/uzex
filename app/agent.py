@@ -93,8 +93,9 @@ class Agent:
                                    http_options=types.HttpOptions(timeout=int(os.environ.get('LLM_TIMEOUT_MS', '25000'))))
         get_con()
 
-    def _config(self, force_final=False):
+    def _config(self, force_final=False, timeout_ms=25000):
         kw = dict(system_instruction=SYSTEM, tools=TOOLS, temperature=0,
+                  http_options=types.HttpOptions(timeout=int(timeout_ms)),
                   automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
                   tool_config=types.ToolConfig(function_calling_config=types.FunctionCallingConfig(
                       mode='ANY', allowed_function_names=['submit_answer'] if force_final else None)))
@@ -102,13 +103,17 @@ class Agent:
             kw['thinking_config'] = types.ThinkingConfig(thinking_level=THINKING)
         return types.GenerateContentConfig(**kw)
 
-    def _generate(self, contents, force_final, trace):
+    def _generate(self, contents, force_final, trace, deadline):
         last = None
         for model in (MODEL, FALLBACK_MODEL):
             for attempt in range(2):
                 t = time.time()
+                remaining = deadline - t
+                if remaining < 4:
+                    raise TimeoutError('time budget exhausted')
                 try:
-                    r = self.client.models.generate_content(model=model, contents=contents, config=self._config(force_final))
+                    r = self.client.models.generate_content(model=model, contents=contents,
+                                                            config=self._config(force_final, min(25000, remaining * 1000 - 2000)))
                     u = getattr(r, 'usage_metadata', None)
                     trace.append({'model': model, 's': round(time.time() - t, 2), 'ok': True,
                                   'calls': [fc.name for fc in (r.function_calls or [])],
@@ -140,7 +145,7 @@ class Agent:
                 force = step >= MAX_STEPS - 1 or elapsed > TIME_BUDGET * 0.7
                 if elapsed > TIME_BUDGET:
                     break
-                resp, model_used = self._generate(contents, force, trace)
+                resp, model_used = self._generate(contents, force, trace, t0 + TIME_BUDGET)
                 cand = resp.candidates[0].content if resp.candidates else None
                 calls = resp.function_calls or []
                 if cand is None or not calls:
@@ -197,6 +202,8 @@ class Agent:
                 contents.append(types.Content(role='user', parts=parts))
             if result is None:
                 result = self._fallback(m, queries, ['timeout'], timeout=True)
+        except TimeoutError:
+            result = self._fallback(m, queries, ['timeout'], timeout=True)
         except Exception as e:
             log.exception('agent error')
             result = {'answer': m['error'], 'assumptions': '', 'no_data': True, 'verified': False, 'error': str(e)[:300]}
@@ -215,3 +222,22 @@ class Agent:
             ans = m['unverified'] + '\n\n' + table_text(q)
             return {'answer': ans, 'assumptions': q.get('purpose', ''), 'no_data': False, 'verified': False, 'problems': problems}
         return {'answer': m['timeout'] if timeout else m['nodata'], 'assumptions': '', 'no_data': True, 'verified': False, 'problems': problems}
+
+
+def diag(api_key=None):
+    """Быстрая проверка доступности моделей."""
+    client = genai.Client(api_key=api_key or os.environ.get('GEMINI_API_KEY') or os.environ.get('GOOGLE_API_KEY'))
+    out = {'key_set': bool(os.environ.get('GEMINI_API_KEY') or os.environ.get('GOOGLE_API_KEY'))}
+    for model in (MODEL, FALLBACK_MODEL):
+        for th in (THINKING, 'off'):
+            t = time.time()
+            try:
+                kw = dict(http_options=types.HttpOptions(timeout=15000), temperature=0)
+                if th != 'off':
+                    kw['thinking_config'] = types.ThinkingConfig(thinking_level=th)
+                r = client.models.generate_content(model=model, contents='Reply with the single word OK',
+                                                   config=types.GenerateContentConfig(**kw))
+                out[f'{model}|{th}'] = {'s': round(time.time() - t, 2), 'text': (r.text or '')[:20]}
+            except Exception as e:
+                out[f'{model}|{th}'] = {'s': round(time.time() - t, 2), 'err': str(e)[:300]}
+    return out
