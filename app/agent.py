@@ -37,6 +37,19 @@ TOOLS = [types.Tool(function_declarations=[
             'answer': types.Schema(type='STRING', description='Concise answer in the language/script of the question. Every number must come from run_sql results.'),
             'assumptions': types.Schema(type='STRING', description='Filters/period/definitions used (e.g. "без аннулированных сделок, сумма в сумах"), same language as answer'),
             'no_data': types.Schema(type='BOOLEAN', description='true if the data does not contain the answer'),
+            'kpis': types.Schema(type='ARRAY', description='Optional, 1-4 headline figures for a small dashboard. Only REFERENCES to run_sql result cells, never numbers.', items=types.Schema(type='OBJECT', properties={
+                'label': types.Schema(type='STRING', description='Short human label with unit, in the answer language, e.g. "Оборот, сум" / "Bitimlar soni". No digits.'),
+                'query': types.Schema(type='INTEGER', description='1-based index of the run_sql call'),
+                'column': types.Schema(type='STRING', description='Exact column name in that result (first row is used)'),
+            }, required=['label', 'query', 'column'])),
+            'chart': types.Schema(type='OBJECT', description='Optional chart over one run_sql result with 2-30 rows (ranking, structure or time series). Omit if no such result.', properties={
+                'type': types.Schema(type='STRING', enum=['bar', 'line', 'donut']),
+                'title': types.Schema(type='STRING', description='Short title in the answer language, no digits'),
+                'query': types.Schema(type='INTEGER', description='1-based index of the run_sql call'),
+                'x': types.Schema(type='STRING', description='Label column (name, region, product, year, month...)'),
+                'y': types.Schema(type='STRING', description='Numeric column to plot'),
+                'y_label': types.Schema(type='STRING', description='Axis/value label with unit, no digits'),
+            }, required=['type', 'query', 'x', 'y']),
         }, required=['answer', 'no_data'])),
 ])]
 
@@ -95,6 +108,48 @@ def humanize(text: str) -> str:
     t = re.sub(r"[ \t]+([,.;:])", r"\1", t)
     t = re.sub(r"[ \t]{2,}", ' ', t)
     return t.strip()
+
+
+_DIGITS = re.compile(r'\d')
+
+
+def _num(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def build_dashboard(final, queries):
+    """Карточки и график только по ссылкам на ячейки результатов SQL. Значения берутся из данных, не из LLM."""
+    dash = {'kpis': [], 'chart': None}
+    def res(i):
+        try:
+            i = int(i)
+        except (TypeError, ValueError):
+            return None
+        return queries[i - 1] if 1 <= i <= len(queries) else None
+    for k in (final.get('kpis') or [])[:4]:
+        q = res(k.get('query'))
+        col = k.get('column')
+        label = (k.get('label') or '').strip()
+        if not q or not q['rows'] or col not in q['columns'] or not label or _DIGITS.search(label):
+            continue
+        v = q['rows'][0][q['columns'].index(col)]
+        if _num(v):
+            dash['kpis'].append({'label': label, 'value': v, 'column': col})
+    c = final.get('chart') or {}
+    q = res(c.get('query'))
+    if q and c.get('x') in q['columns'] and c.get('y') in q['columns'] and 2 <= len(q['rows']) <= 30:
+        xi, yi = q['columns'].index(c['x']), q['columns'].index(c['y'])
+        pts = [[str(r[xi]), r[yi]] for r in q['rows'] if _num(r[yi])]
+        title = (c.get('title') or '').strip()
+        ylab = (c.get('y_label') or '').strip()
+        if len(pts) >= 2 and not _DIGITS.search(title + ylab):
+            t = c.get('type') if c.get('type') in ('bar', 'line', 'donut') else 'bar'
+            if t == 'donut' and (len(pts) > 7 or any(p[1] < 0 for p in pts)):
+                t = 'bar'
+            dash['chart'] = {'type': t, 'title': title, 'y_label': ylab, 'points': pts, 'x': c['x'], 'y': c['y']}
+    if not dash['kpis'] and not dash['chart']:
+        return None
+    return dash
 
 
 def _fmt_cell(v):
@@ -215,6 +270,11 @@ class Agent:
                     problems = validate(answer + ' ' + (final.get('assumptions') or ''), question, [t['result'] for t in tool_log])
                     if not problems:
                         result = {'answer': humanize(answer), 'assumptions': humanize(final.get('assumptions') or ''), 'no_data': no_data, 'verified': True}
+                        if not no_data:
+                            try:
+                                result['dashboard'] = build_dashboard(final, queries)
+                            except Exception:
+                                log.exception('dashboard')
                         break
                     log.warning('validation failed: %s', problems)
                     if not validation_retry_used and time.time() - t0 < TIME_BUDGET * 0.75:
