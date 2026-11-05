@@ -7,8 +7,8 @@ from .lookup import lookup
 from .validate import validate
 
 log = logging.getLogger('agent')
-MODEL = os.environ.get('GEMINI_MODEL', 'gemini-3.8-flash')
-FALLBACK_MODEL = os.environ.get('GEMINI_FALLBACK_MODEL', 'gemini-3.6-flash')
+MODEL = os.environ.get('GEMINI_MODEL', 'gemini-3.6-flash')
+FALLBACK_MODEL = os.environ.get('GEMINI_FALLBACK_MODEL', 'gemini-3.5-flash-lite')
 TIME_BUDGET = float(os.environ.get('TIME_BUDGET_S', '70'))
 MAX_STEPS = int(os.environ.get('MAX_STEPS', '8'))
 THINKING = os.environ.get('GEMINI_THINKING', 'low')  # low | high | off
