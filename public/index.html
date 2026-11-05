@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Биржевой аналитик</title>
+<style>
+:root{--bg:#0b0d1f;--panel:#12152e;--line:#262a52;--text:#eef0ff;--muted:#9aa0d6;--accent:#3a4fd8;--ok:#33e07a;--warn:#ffb547;--code:#0e1026}
+@media (prefers-color-scheme: light){:root{--bg:#f5f6fb;--panel:#fff;--line:#dde0f0;--text:#14162e;--muted:#5b6190;--accent:#2b3fd0;--ok:#11994d;--warn:#b56f00;--code:#f1f2fa}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:880px;margin:0 auto;padding:24px 16px 140px}
+h1{font-size:24px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.msg{margin:14px 0}
+.q{background:var(--accent);color:#fff;padding:10px 14px;border-radius:14px 14px 4px 14px;margin-left:auto;max-width:85%;width:fit-content;white-space:pre-wrap}
+.a{background:var(--panel);border:1px solid var(--line);padding:14px 16px;border-radius:14px 14px 14px 4px;white-space:pre-wrap}
+.meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--muted)}
+.badge{border:1px solid var(--line);border-radius:6px;padding:1px 7px}
+.badge.ok{color:var(--ok);border-color:var(--ok)}
+.badge.warn{color:var(--warn);border-color:var(--warn)}
+details{margin-top:10px;border-top:1px solid var(--line);padding-top:8px;font-size:14px}
+summary{cursor:pointer;color:var(--muted)}
+.assum{margin:8px 0;color:var(--text)}
+pre{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:10px;overflow:auto;font-size:12px;white-space:pre-wrap;word-break:break-word}
+.tbl{overflow:auto;margin:6px 0 12px}
+table{border-collapse:collapse;font-size:12px;min-width:100%}
+th,td{border:1px solid var(--line);padding:4px 6px;text-align:left;white-space:nowrap}
+th{background:var(--code)}
+form{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(transparent,var(--bg) 30%);padding:20px 16px 16px}
+.bar{max-width:880px;margin:0 auto;display:flex;gap:8px}
+textarea{flex:1;resize:none;height:52px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:14px;font:inherit}
+button.send{border:0;border-radius:12px;background:var(--accent);color:#fff;padding:0 20px;font:inherit;cursor:pointer}
+button.send:disabled{opacity:.5;cursor:wait}
+.thinking{color:var(--muted);font-style:italic}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Биржевой аналитик · Birja tahlilchisi</h1>
+  <p class="sub">Отвечает на вопросы о сделках биржи (03.01.2022 – 30.10.2026) на русском и узбекском. Каждый ответ посчитан SQL-запросом к реестру, под ответом видно, на чём он основан. Если ответа в данных нет, агент так и скажет.</p>
+  <div class="chips" id="chips"></div>
+  <div id="log"></div>
+</div>
+<form id="f">
+  <div class="bar">
+    <textarea id="q" placeholder="Задайте вопрос… / Savol bering…" autofocus></textarea>
+    <button class="send" id="b" type="submit">→</button>
+  </div>
+</form>
+<script>
+const EX=["Какой общий оборот биржи в 2025 году?","Топ-5 покупателей цемента в 2026 году","Средняя цена бензина АИ-92 в сентябре 2026","Сколько сделок было аннулировано в 2024 году?","2025-yilda eksport bitimlari summasi qancha?","Farg‘ona viloyatida eng ko‘p sotilgan tovar qaysi?"];
+const chips=document.getElementById('chips'),log=document.getElementById('log'),f=document.getElementById('f'),q=document.getElementById('q'),b=document.getElementById('b');
+EX.forEach(t=>{const c=document.createElement('button');c.className='chip';c.type='button';c.textContent=t;c.onclick=()=>{q.value=t;send()};chips.appendChild(c)});
+q.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
+f.addEventListener('submit',e=>{e.preventDefault();send()});
+const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const fmt=v=>typeof v==='number'?(Number.isInteger(v)&&!(v>=1e8&&v<1e9)?v.toLocaleString('ru-RU'):Number.isInteger(v)?String(v):v.toLocaleString('ru-RU',{maximumFractionDigits:4})):esc(v);
+function el(cls,html){const d=document.createElement('div');d.className=cls;d.innerHTML=html;return d}
+async function send(){
+  const text=q.value.trim(); if(!text||b.disabled) return;
+  q.value=''; b.disabled=true;
+  const m=el('msg',''); m.appendChild(el('q',esc(text)));
+  const a=el('a thinking','Считаю по данным… 0 с'); m.appendChild(a); log.appendChild(m); m.scrollIntoView({behavior:'smooth'});
+  const t0=Date.now(); const tm=setInterval(()=>a.textContent='Считаю по данным… '+Math.round((Date.now()-t0)/1000)+' с',500);
+  try{
+    const r=await fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:text})});
+    const d=await r.json(); clearInterval(tm); a.className='a';
+    let h=esc(d.answer||d.error||'Ошибка');
+    const uz=(d.lang||'').startsWith('uz');
+    const L=uz?{basis:'Nimaga asoslangan',assum:'Shartlar',q:'SQL so‘rov',rows:'qator',ver:'maʼlumotlar bilan tasdiqlangan',unver:'tasdiqlanmagan',nod:'maʼlumot yoʻq'}:{basis:'На чём основано',assum:'Условия',q:'SQL-запрос',rows:'строк',ver:'проверено по данным',unver:'не подтверждено',nod:'нет данных'};
+    h+='<div class="meta">'+(d.verified?`<span class="badge ok">✓ ${L.ver}</span>`:`<span class="badge warn">${L.unver}</span>`)+(d.no_data?`<span class="badge">${L.nod}</span>`:'')+`<span>${d.elapsed_s??''} с</span></div>`;
+    if((d.queries&&d.queries.length)||d.assumptions){
+      h+=`<details><summary>${L.basis}</summary>`;
+      if(d.assumptions) h+=`<div class="assum"><b>${L.assum}:</b> ${esc(d.assumptions)}</div>`;
+      (d.queries||[]).forEach((x,i)=>{
+        h+=`<div><b>${L.q} ${i+1}</b>${x.purpose?' — '+esc(x.purpose):''}</div><pre>${esc(x.sql)}</pre>`;
+        if(x.rows&&x.rows.length){h+='<div class="tbl"><table><tr>'+x.columns.map(c=>`<th>${esc(c)}</th>`).join('')+'</tr>'+x.rows.slice(0,10).map(r=>'<tr>'+r.map(v=>`<td>${fmt(v)}</td>`).join('')+'</tr>').join('')+'</table></div>'+(x.row_count>10?`<div class="sub">… ${x.row_count}${x.truncated?'+':''} ${L.rows}</div>`:'')}
+      });
+      h+='</details>';
+    }
+    a.innerHTML=h;
+  }catch(e){clearInterval(tm);a.className='a';a.textContent='Сервис недоступен, попробуйте ещё раз.'}
+  b.disabled=false; q.focus();
+}
+</script>
+</body>
+</html>

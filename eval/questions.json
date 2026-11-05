@@ -1,0 +1,429 @@
+[
+ {
+  "id": 1,
+  "lang": "ru",
+  "question": "Сколько всего сделок было заключено в 2023 году?",
+  "kind": "num",
+  "expect": [
+   93985
+  ],
+  "alt": [
+   87672
+  ],
+  "note": ""
+ },
+ {
+  "id": 2,
+  "lang": "ru",
+  "question": "Какой общий объём торгов в сумах за 2025 год?",
+  "kind": "num",
+  "expect": [
+   52060836360056.94
+  ],
+  "alt": [
+   55976577480266.92
+  ],
+  "note": ""
+ },
+ {
+  "id": 3,
+  "lang": "ru",
+  "question": "Сколько сделок было аннулировано в 2024 году?",
+  "kind": "num",
+  "expect": [
+   7323
+  ],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 4,
+  "lang": "ru",
+  "question": "Какой был курс доллара 15.03.2024?",
+  "kind": "num",
+  "expect": [
+   11720.49
+  ],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 5,
+  "lang": "ru",
+  "question": "Какая компания является продавцом по контракту № 100002?",
+  "kind": "name",
+  "expect": [
+   "VAMINU INDUSTRIYA MAS’ULIYATI CHEKLANGAN JAMIYATI"
+  ],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 6,
+  "lang": "ru",
+  "question": "Назови топ-3 покупателей карбамида по сумме сделок за 2025 год",
+  "kind": "names",
+  "expect": [
+   "\"Fo‘sor Qurilish\" MChJ",
+   "RANA BIZNES AJ",
+   "\"Chisil Plus\" MChJ"
+  ],
+  "alt": [
+   "\"Fo‘sor Qurilish\" MChJ",
+   "RANA BIZNES AJ",
+   "\"Chisil Plus\" MChJ"
+  ],
+  "note": ""
+ },
+ {
+  "id": 7,
+  "lang": "ru",
+  "question": "Какая средневзвешенная цена за литр бензина АИ-92 в сентябре 2026 года?",
+  "kind": "num",
+  "expect": [
+   11352.3874
+  ],
+  "alt": [
+   11342.3671
+  ],
+  "note": "бензин бывает в тоннах и литрах"
+ },
+ {
+  "id": 8,
+  "lang": "ru",
+  "question": "В каком регионе было больше всего сделок в 2026 году?",
+  "kind": "name",
+  "expect": [
+   "Toshkent shahri"
+  ],
+  "alt": [
+   "г. Ташкент",
+   "Ташкент"
+  ],
+  "note": ""
+ },
+ {
+  "id": 9,
+  "lang": "ru",
+  "question": "Какова сумма экспортных сделок в долларах за 2025 год?",
+  "kind": "num",
+  "expect": [
+   203892531.64
+  ],
+  "alt": [
+   220524617.85
+  ],
+  "note": ""
+ },
+ {
+  "id": 10,
+  "lang": "ru",
+  "question": "Какой брокер участвовал в наибольшем количестве сделок за всё время?",
+  "kind": "name",
+  "expect": [
+   "\"Gucham Broker\" MChJ"
+  ],
+  "alt": [
+   "\"Gucham Broker\" MChJ",
+   "FIPI BROKER MCHJ"
+  ],
+  "note": ""
+ },
+ {
+  "id": 11,
+  "lang": "ru",
+  "question": "Сколько тонн портландцемента продано в Самаркандской области в 2024 году?",
+  "kind": "num",
+  "expect": [
+   5603.0
+  ],
+  "alt": [
+   5771.0,
+   5593.0
+  ],
+  "note": ""
+ },
+ {
+  "id": 12,
+  "lang": "ru",
+  "question": "Сколько сделок по хлопку-сырцу 1 сорта было в 2023 году?",
+  "kind": "num",
+  "expect": [
+   13091
+  ],
+  "alt": [
+   12296
+  ],
+  "note": ""
+ },
+ {
+  "id": 13,
+  "lang": "ru",
+  "question": "Какая доля частично исполненных сделок в 2025 году в процентах?",
+  "kind": "num",
+  "expect": [
+   4.6794
+  ],
+  "alt": [
+   5.0307,
+   5.0307
+  ],
+  "note": ""
+ },
+ {
+  "id": 14,
+  "lang": "ru",
+  "question": "Сколько компаний-покупателей есть в реестре участников?",
+  "kind": "num",
+  "expect": [
+   14000
+  ],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 15,
+  "lang": "ru",
+  "question": "Какая самая крупная сделка по сумме в 2022 году?",
+  "kind": "num",
+  "expect": [
+   167663
+  ],
+  "alt": [],
+  "note": "сумма 16458508200.0"
+ },
+ {
+  "id": 16,
+  "lang": "ru",
+  "question": "Расскажи о сделке № 300000: какой товар, на какую сумму и кто покупатель?",
+  "kind": "num",
+  "expect": [
+   246415986.0
+  ],
+  "alt": [],
+  "note": "[\"Карбамид Марка Б\", 246415986.0, \"ZAFACHIZ SERVIS MCHJ\", \"Исполнен\"]"
+ },
+ {
+  "id": 17,
+  "lang": "ru",
+  "question": "Сколько в среднем дней проходит от сделки до оплаты в 2025 году?",
+  "kind": "num",
+  "expect": [
+   6.8107
+  ],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 18,
+  "lang": "ru",
+  "question": "Сколько сделок в 2024 году были поставлены с нарушением срока поставки?",
+  "kind": "num",
+  "expect": [
+   3952
+  ],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 19,
+  "lang": "ru",
+  "question": "Какой товар принёс наибольший оборот за всё время?",
+  "kind": "name",
+  "expect": [
+   "Хлопок-сырец"
+  ],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 20,
+  "lang": "ru",
+  "question": "Сколько сделок провёл продавец с ИНН 999222902 в октябре 2026 года?",
+  "kind": "num",
+  "expect": [
+   580
+  ],
+  "alt": [
+   569
+  ],
+  "note": ""
+ },
+ {
+  "id": 21,
+  "lang": "ru",
+  "question": "Какой оборот биржи в ноябре 2026 года?",
+  "kind": "nodata",
+  "expect": [],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 22,
+  "lang": "ru",
+  "question": "Сколько айфонов продано на бирже?",
+  "kind": "nodata",
+  "expect": [],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 23,
+  "lang": "ru",
+  "question": "Сколько сделок было в 2021 году?",
+  "kind": "nodata",
+  "expect": [],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 24,
+  "lang": "ru",
+  "question": "Какой объём покупок у компании с ИНН 123456789?",
+  "kind": "nodata",
+  "expect": [],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 25,
+  "lang": "ru",
+  "question": "Кто директор компании \"Pudexiz Plast\"?",
+  "kind": "nodata",
+  "expect": [],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 26,
+  "lang": "uz",
+  "question": "2025-yilda nechta bitim tuzilgan?",
+  "kind": "num",
+  "expect": [
+   115763
+  ],
+  "alt": [
+   107678
+  ],
+  "note": ""
+ },
+ {
+  "id": 27,
+  "lang": "uz",
+  "question": "2024-yilda Farg‘ona viloyatida savdo hajmi so‘mda qancha bo‘lgan?",
+  "kind": "num",
+  "expect": [
+   1830814569349.711
+  ],
+  "alt": [
+   1959295427430.2822
+  ],
+  "note": ""
+ },
+ {
+  "id": 28,
+  "lang": "uz",
+  "question": "2026-yil 1-yanvar holatiga dollar kursi qancha edi?",
+  "kind": "num",
+  "expect": [
+   12560.63
+  ],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 29,
+  "lang": "uz",
+  "question": "Eng ko‘p bitim tuzgan sotuvchi kompaniya qaysi?",
+  "kind": "name",
+  "expect": [
+   "SITO‘TOM TEKSTIL MCHJ"
+  ],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 30,
+  "lang": "uz",
+  "question": "2023-yilda nechta bitim bekor qilingan?",
+  "kind": "num",
+  "expect": [
+   6313
+  ],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 31,
+  "lang": "uz",
+  "question": "Paxta xomashyosi bo‘yicha 2025-yilda jami necha kilogramm sotilgan?",
+  "kind": "num",
+  "expect": [
+   1844729923.0
+  ],
+  "alt": [
+   1976409444.0
+  ],
+  "note": ""
+ },
+ {
+  "id": 32,
+  "lang": "uz",
+  "question": "2030-yilda nechta bitim bo‘ladi?",
+  "kind": "nodata",
+  "expect": [],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 33,
+  "lang": "uz_cyr",
+  "question": "2024 йилда экспорт битимлари сони нечта?",
+  "kind": "num",
+  "expect": [
+   1327
+  ],
+  "alt": [
+   1229
+  ],
+  "note": ""
+ },
+ {
+  "id": 34,
+  "lang": "uz_cyr",
+  "question": "Тошкент вилоятида 2026 йилда энг кўп сумма бўйича сотилган товар қайси?",
+  "kind": "name",
+  "expect": [
+   "Хлопок-сырец"
+  ],
+  "alt": [
+   "Paxta xomashyosi"
+  ],
+  "note": ""
+ },
+ {
+  "id": 35,
+  "lang": "uz_cyr",
+  "question": "Қайси брокер 2025 йилда энг кўп битимда қатнашган?",
+  "kind": "name",
+  "expect": [
+   "\"Gucham Broker\" MChJ"
+  ],
+  "alt": [],
+  "note": ""
+ },
+ {
+  "id": 36,
+  "lang": "uz_cyr",
+  "question": "Буғдой уни 2026 йилда ўртача неча сўмдан сотилган (1 кг учун)?",
+  "kind": "num",
+  "expect": [
+   5836.0889
+  ],
+  "alt": [
+   5842.5971,
+   5831.7553
+  ],
+  "note": ""
+ }
+]
